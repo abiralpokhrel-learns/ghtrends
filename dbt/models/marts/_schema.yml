@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: fct_repo_trends_daily
+    description: One row per repo per day with stars, PR activity, and 7-day rolling stars.
+    columns:
+      - name: repo_id
+        tests: [not_null]
+      - name: event_date
+        tests: [not_null]
+      - name: stars
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: pr_merge_rate
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [repo_id, event_date]

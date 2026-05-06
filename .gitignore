@@ -1,0 +1,78 @@
+# --- Secrets and env ---
+.env
+.env.local
+*.pem
+*.key
+credentials
+.aws/
+
+# --- Terraform ---
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+venv/
+env/
+ENV/
+
+# --- dbt ---
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+dbt/profiles.yml
+
+# --- Lambda packaging artifacts ---
+lambda/**/build/
+lambda/**/*.zip
+lambda/**/layer/
+
+# --- IDE ---
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# --- Streamlit ---
+.streamlit/secrets.toml
+
+# --- Docker ---
+*.log
+
+# --- Local data ---
+data/
+output/
+*.parquet
+*.csv
+!analysis/queries/sample_data/*.csv

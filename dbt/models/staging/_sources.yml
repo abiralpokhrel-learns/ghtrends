@@ -1,0 +1,24 @@
+version: 2
+
+sources:
+  - name: lake
+    schema: ghtrends_lake
+    description: Glue Catalog tables crawled from the raw Parquet written by the ingest Lambda
+    tables:
+      - name: watch_events
+        description: GitHub WatchEvent (a star) — partitioned by year/month/day
+        columns:
+          - name: id
+            tests: [not_null]
+          - name: repo_id
+            tests: [not_null]
+          - name: created_at
+            tests: [not_null]
+
+      - name: pull_request_events
+        description: GitHub PullRequestEvent — partitioned by year/month/day
+        columns:
+          - name: id
+            tests: [not_null]
+          - name: repo_id
+            tests: [not_null]

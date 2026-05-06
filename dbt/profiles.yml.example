@@ -1,0 +1,16 @@
+# Copy to ~/.dbt/profiles.yml and fill in values.
+# DO NOT commit profiles.yml — it's gitignored.
+
+ghtrends:
+  target: dev
+  outputs:
+    dev:
+      type: athena
+      s3_staging_dir: s3://ghtrends-dev-lake/athena_results/
+      s3_data_dir: s3://ghtrends-dev-lake/dbt/
+      region_name: us-east-1
+      database: awsdatacatalog
+      schema: ghtrends_lake
+      aws_profile_name: ghtrends
+      threads: 4
+      work_group: primary
