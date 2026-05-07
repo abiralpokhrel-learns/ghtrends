@@ -4,11 +4,7 @@ A serverless data platform on AWS that ingests every public GitHub event, models
 
 ## Live demo
 
-**App:** <https://ghtrends.streamlit.app/> (e.g. `https://ghtrends-abiral.streamlit.app`)
-
-**90-second walkthrough:**
-
-[![Demo video](docs/demo_thumbnail.png)](<TODO_LOOM_URL>)
+**App:** [ghtrends.streamlit.app](https://ghtrends.streamlit.app/)
 
 **dbt project documentation:** [abiralpokhrel-learns.github.io/ghtrends](https://abiralpokhrel-learns.github.io/ghtrends/)
 
@@ -16,7 +12,7 @@ A serverless data platform on AWS that ingests every public GitHub event, models
 
 ## Screenshot
 
-![Dashboard screenshot](docs/screenshots/trends_page.png)
+![Dashboard screenshot](analysis/findings/trends_page.png)
 
 ## Architecture
 
@@ -78,43 +74,43 @@ The full reasoning for each cut is in `NEXT.md`.
 
 Five real findings produced by the queries in `analysis/queries/`:
 
-### 1. <TODO_FINDING_1_HEADLINE>
+### 1. Top trending repo: Hmbown/DeepSeek-TUI with 172 stars over 3 days
 
 ![Finding 1](analysis/findings/01_top_starred_repos.png)
 
-<TODO_FINDING_1_PARAGRAPH>
+The top trending repository in the data window was Hmbown/DeepSeek-TUI, a terminal interface for DeepSeek, with 172 stars in 3 active days. The runners-up — modem-dev/hunk (98), addyosmani/agent-skills (95), nexu-io/open-design (70) — show a clear cluster around AI-developer-tooling, which tracks with the broader 2026 open-source momentum.
 
 Query: [`analysis/queries/01_top_starred_repos.sql`](analysis/queries/01_top_starred_repos.sql)
 
-### 2. <TODO_FINDING_2_HEADLINE>
+### 2. Star velocity ranks the fastest-accelerating repo at 57 stars/day average
 
 ![Finding 2](analysis/findings/02_star_velocity.png)
 
-<TODO_FINDING_2_PARAGRAPH>
+Velocity (avg daily stars) separates steady growth from viral spikes. Hmbown/DeepSeek-TUI averaged 57.3 stars/day with a single-day peak of 133 — a clear viral burst rather than slow-burn growth. Compare to addyosmani/agent-skills at 31.7 stars/day across 3 days — also strong, but more even. Useful for spotting what's hot right now, not what was popular six months ago.
 
 Query: [`analysis/queries/02_star_velocity.sql`](analysis/queries/02_star_velocity.sql)
 
-### 3. <TODO_FINDING_3_HEADLINE>
+### 3. Bots dominate GitHub activity — Dependabot alone touched 7,079 unique repos
 
-![Finding 3](analysis/findings/03_pr_merge_rate.png)
+![Finding 3](analysis/findings/05_active_users.png)
 
-<TODO_FINDING_3_PARAGRAPH>
+The top 5 most active GitHub accounts in the window are all bots: Dependabot (14,684 events across 7,079 repos), pull[bot] (4,631 events), github-actions[bot] (2,127), renovate[bot] (1,574), and Copilot (863). This is a measurement of what "open source contribution" actually looks like at scale — automated dependency updates and CI runs vastly outnumber human commits. The first non-bot account (gaoypChina) appears at rank 12 with 90 events.
 
-Query: [`analysis/queries/03_pr_merge_rate.sql`](analysis/queries/03_pr_merge_rate.sql)
+Query: [`analysis/queries/05_active_users.sql`](analysis/queries/05_active_users.sql)
 
-### 4. <TODO_FINDING_4_HEADLINE>
+### 4. Hourly star distribution is bimodal across UTC
 
 ![Finding 4](analysis/findings/06_hourly_star_distribution.png)
 
-<TODO_FINDING_4_PARAGRAPH>
+Star activity per UTC hour shows two peaks: 00:00 UTC (2,410 stars) and the late-evening UTC window from 22:00 to 23:00 (1,241 to 1,896 stars). The 13:00 to 18:00 UTC range is consistently quieter (~250-400 stars/hour). The pattern reflects how open-source engagement clusters around evenings in the Americas and mornings/evenings in Asia. Useful for timing launch announcements.
 
 Query: [`analysis/queries/06_hourly_star_distribution.sql`](analysis/queries/06_hourly_star_distribution.sql)
 
-### 5. <TODO_FINDING_5_HEADLINE>
+### 5. Top organizations: Microsoft spreads wide, single-repo orgs go deep
 
 ![Finding 5](analysis/findings/04_top_organizations.png)
 
-<TODO_FINDING_5_PARAGRAPH>
+Microsoft tops the org leaderboard with 332 events across 118 unique repos — the classic broad-and-shallow pattern of a large institutional contributor. Hmbown is the opposite: 194 events but only 1 unique repo. Different shapes of open-source presence: Microsoft is everywhere, Hmbown is everywhere on one project. Both visible in the same data window.
 
 Query: [`analysis/queries/04_top_organizations.sql`](analysis/queries/04_top_organizations.sql)
 
@@ -134,52 +130,54 @@ Designed to stay within the AWS free tier. Real spend during development:
 
 ## Local setup
 
-Reproduces the dev environment if you want to run any of this yourself.
+Reproduces the dev environment if you want to run any of this yourself. Commands assume bash or Git Bash. On PowerShell replace `source venv/Scripts/activate` with `venv\Scripts\activate`.
 
 ```bash
 # Clone
 git clone https://github.com/abiralpokhrel-learns/ghtrends.git
 cd ghtrends
 
-# AWS account setup
-# (creates S3 state bucket + DynamoDB lock table)
+# One-time: create the Terraform state backend (S3 bucket + DynamoDB lock table)
 make bootstrap
 
-# Configure backend
 # Edit terraform/backend.tf with the bucket name printed by bootstrap
 # Add TFSTATE_BUCKET=<name> to .env
 
-# Provision infra
+# Provision the infra
 make tf-init
 make tf-apply
 
-# Build the ingest Lambda zip
+# Build the ingest Lambda zip (requires Docker running)
 make lambda-package
 
-# Run the Glue Crawler manually for the first time
+# Run the Glue Crawler once to register tables
 aws glue start-crawler --name ghtrends-dev-crawler --profile ghtrends
 
 # Run the dbt models
 cd dbt
 dbt deps
 dbt build
+cd ..
 
-# Build the embeddings index (top 500 trending repos)
-cd ../embeddings
-python -m venv venv && source venv/Scripts/activate
+# Build the embeddings index for the top 500 trending repos
+cd embeddings
+python -m venv venv
+source venv/Scripts/activate
 pip install -r requirements.txt
 python embed_repos.py --top 500
+cd ..
 
 # Run Streamlit locally
-cd ../streamlit
-python -m venv venv && source venv/Scripts/activate
+cd streamlit
+python -m venv venv
+source venv/Scripts/activate
 pip install -r requirements.txt
 streamlit run app.py
 ```
 
 Required local tools: Python 3.11+, Terraform 1.6+, AWS CLI v2, Docker (for Lambda packaging), Git, Make.
 
-You will need an AWS account, a GitHub Personal Access Token (no scopes needed), and ~3 hours of patience for first-time setup. Total infra cost under $2/month.
+You will need an AWS account, a GitHub Personal Access Token (no scopes needed), and a few hours of patience for first-time setup. Total infra cost under $2/month.
 
 ## Project structure
 
