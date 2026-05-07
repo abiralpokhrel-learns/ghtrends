@@ -9,11 +9,12 @@ terraform {
   required_version = ">= 1.6"
 
   backend "s3" {
-    bucket         = "ghtrends-tfstate-358982197687"   # e.g. ghtrends-tfstate-123456789012
+    bucket         = "ghtrends-tfstate-358982197687" # e.g. ghtrends-tfstate-123456789012
     key            = "ghtrends/dev/terraform.tfstate"
     region         = "us-east-1"
     dynamodb_table = "tfstate-locks"
     encrypt        = true
+    profile        = "ghtrends" # so backend uses the same AWS profile as the providers
   }
 
   required_providers {

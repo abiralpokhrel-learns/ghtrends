@@ -270,7 +270,8 @@ Same as above but threshold `10` and alarm name `billing-alarm-10-usd`. Reuse th
 **How (Mac):**
 
 1. Install Homebrew from `brew.sh`.
-2. ```
+2. Install the rest:
+   ```
    brew install tfenv awscli git docker make
    tfenv install 1.6.6
    tfenv use 1.6.6
@@ -281,7 +282,8 @@ Same as above but threshold `10` and alarm name `billing-alarm-10-usd`. Reuse th
 **How (Linux):**
 
 1. Follow HashiCorp's apt repo instructions for Terraform 1.6+.
-2. ```
+2. Install the rest:
+   ```
    sudo apt install -y awscli git docker.io make
    sudo usermod -aG docker $USER
    ```
@@ -442,7 +444,7 @@ Terraform has been successfully initialized!
    - `ghtrends-dev-lake`
    Both should show "Bucket Versioning: Enabled".
 
-**What success looks like:** Terraform prints "Apply complete! Resources: 11 added".
+**What success looks like:** Terraform prints "Apply complete! Resources: 9 added".
 
 ### 1.11 — Verify destroy/recreate cycle (45 min)
 
@@ -452,17 +454,19 @@ Terraform has been successfully initialized!
 
 **How:**
 
-1. ```
+1. Tear it down:
+   ```
    make tf-destroy
    ```
-   Type `yes`. Wait 30 seconds.
+   Type `yes` when prompted. Wait 30 seconds.
 
-2. Check Console → S3 → both buckets are gone.
+2. Check Console → S3 — both buckets are gone.
 
-3. ```
+3. Recreate:
+   ```
    make tf-apply
    ```
-   Buckets are back, identical.
+   Buckets come back, identical to before.
 
 **If destroy fails with "BucketNotEmpty":** the bucket has versioned objects. Edit `terraform/modules/s3_data_lake/main.tf`, add `force_destroy = true` to each `aws_s3_bucket` resource. Re-run destroy.
 
@@ -485,7 +489,8 @@ Terraform has been successfully initialized!
    - `.terraform/` directory
    If you do, your `.gitignore` is wrong. Fix before continuing.
 
-3. ```
+3. Commit and push:
+   ```
    git commit -m "Phase 1: foundations and state backend"
    git branch -M main
    git remote add origin git@github.com:YOUR_USERNAME/ghtrends.git
@@ -582,17 +587,33 @@ Do not modify anything yet.
    pip install -r requirements.txt
    ```
 
-2. Set required environment variables:
+2. Set required environment variables. Pick the section for your terminal:
+
+   **Mac / Linux / Git Bash on Windows:**
    ```
    export RAW_BUCKET=ghtrends-dev-raw
    export AWS_PROFILE=ghtrends
    ```
-   (Windows PowerShell: `$env:RAW_BUCKET="ghtrends-dev-raw"`)
 
-3. Run for a known good hour. Pick a date 2-3 days ago to be safe (so GH Archive has definitely published it):
+   **Windows PowerShell** (prompt looks like `PS C:\...>`):
    ```
-   python handler.py 2026-04-30T13:00:00Z
+   $env:RAW_BUCKET = "ghtrends-dev-raw"
+   $env:AWS_PROFILE = "ghtrends"
    ```
+
+   **Windows CMD** (prompt looks like `C:\...>`):
+   ```
+   set RAW_BUCKET=ghtrends-dev-raw
+   set AWS_PROFILE=ghtrends
+   ```
+
+   To verify they stuck, run `echo $env:AWS_PROFILE` (PowerShell) or `echo $AWS_PROFILE` (Bash) — it should print `ghtrends`.
+
+3. Run for a known good hour. Pick a date **2-3 days before today** so GH Archive has published it:
+   ```
+   python handler.py 2026-05-04T13:00:00Z
+   ```
+   Replace `2026-05-04` with whatever "2-3 days ago" is when you run this. Format must be `YYYY-MM-DDTHH:00:00Z`.
 
 4. You should see log output like:
    ```
@@ -690,9 +711,11 @@ Do not modify anything yet.
    ```
    Should say "Plan: 7-8 to add". Read every line.
 
-7. ```
+7. Apply:
+   ```
    make tf-apply
    ```
+   Type `yes` when prompted.
 
 **If you get `InvalidParameterValue: filename`:** the zip path is wrong. Check the relative path resolves correctly.
 
@@ -704,20 +727,42 @@ Do not modify anything yet.
 
 **How:**
 
-1. ```
+1. Invoke the function from your laptop.
+
+   **PowerShell (Windows)** — write the payload to a file first, then read it via `file://`. Do NOT try to pass JSON inline; PowerShell strips quotes when handing args to `aws.exe`.
+   ```
+   '{"timestamp": "2026-05-04T14:00:00Z"}' | Set-Content -Path payload.json -Encoding ascii
+   aws lambda invoke --function-name ghtrends-dev-ingest --payload file://payload.json --cli-binary-format raw-in-base64-out --profile ghtrends response.json
+   ```
+   Then `Remove-Item payload.json` to clean up.
+
+   **Bash (Mac, Linux, Git Bash on Windows):**
+   ```
    aws lambda invoke \
      --function-name ghtrends-dev-ingest \
-     --payload '{"timestamp": "2026-04-30T14:00:00Z"}' \
+     --payload '{"timestamp": "2026-05-04T14:00:00Z"}' \
      --cli-binary-format raw-in-base64-out \
      --profile ghtrends \
-     /tmp/lambda-response.json
+     response.json
    ```
 
-2. Check the response:
+   Replace `2026-05-04` with a date 2-3 days before today.
+
+   You should see `"StatusCode": 200` printed back. That confirms AWS accepted the call.
+
+2. Check what the Lambda returned (Lambda's own response, written to `response.json`):
+
+   **PowerShell/CMD:**
    ```
-   cat /tmp/lambda-response.json
+   Get-Content response.json
    ```
-   Should be JSON with `"statusCode": 200, "counts": {...}`.
+
+   **Bash:**
+   ```
+   cat response.json
+   ```
+
+   Should be JSON like `{"statusCode": 200, "counts": {"total": 56234, "WatchEvent": 4231, "PullRequestEvent": 1182}, ...}`.
 
 3. Check S3 has a new file:
    ```
@@ -1097,7 +1142,8 @@ All tests should pass.
 
 dbt can generate a static HTML site documenting your project.
 
-1. ```
+1. Generate and serve:
+   ```
    dbt docs generate
    dbt docs serve   # opens at localhost:8080
    ```

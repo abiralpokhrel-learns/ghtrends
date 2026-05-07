@@ -70,7 +70,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "raw" {
   }
 }
 
-output "raw_bucket_name"  { value = aws_s3_bucket.raw.bucket }
-output "raw_bucket_arn"   { value = aws_s3_bucket.raw.arn }
+output "raw_bucket_name" { value = aws_s3_bucket.raw.bucket }
+output "raw_bucket_arn" { value = aws_s3_bucket.raw.arn }
 output "lake_bucket_name" { value = aws_s3_bucket.lake.bucket }
-output "lake_bucket_arn"  { value = aws_s3_bucket.lake.arn }
+output "lake_bucket_arn" { value = aws_s3_bucket.lake.arn }

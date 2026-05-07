@@ -1,22 +1,29 @@
--- Star velocity: stars per day, then ranked.
--- Useful for finding repos that are accelerating, not just popular.
+-- Stars per day per repo, ranked by daily average.
+-- Finds repos that are accelerating, not just historically popular.
 
-with daily as (
-    select repo_name, event_date, stars
-    from ghtrends_lake.fct_repo_trends_daily
-    where event_date >= current_date - interval '14' day
-),
-agg as (
-    select
+WITH daily_stars AS (
+    SELECT
         repo_name,
-        sum(stars) as total_stars,
-        avg(stars) as avg_daily_stars,
-        max(stars) as peak_daily_stars
-    from daily
-    group by repo_name
+        day,
+        count(*) AS stars_in_day
+    FROM ghtrends_lake.raw
+    WHERE event_type = 'WatchEvent'
+      AND year = '2026'
+      AND repo_name IS NOT NULL
+    GROUP BY repo_name, day
+),
+agg AS (
+    SELECT
+        repo_name,
+        sum(stars_in_day)            AS total_stars,
+        avg(stars_in_day)            AS avg_daily_stars,
+        max(stars_in_day)            AS peak_daily_stars,
+        count(DISTINCT day)          AS active_days
+    FROM daily_stars
+    GROUP BY repo_name
 )
-select *
-from agg
-where total_stars >= 50  -- floor to filter noise
-order by avg_daily_stars desc
-limit 100;
+SELECT *
+FROM agg
+WHERE total_stars >= 10  -- floor to filter noise
+ORDER BY avg_daily_stars DESC
+LIMIT 50;

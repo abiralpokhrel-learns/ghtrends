@@ -1,12 +1,14 @@
--- Top 50 repos by total stars over the past 7 days.
--- Run against the dbt mart from Phase 4 (fct_repo_trends_daily).
+-- Top 50 repos by total stars in the data window.
+-- Runs against ghtrends_lake.raw (Phase 3 single-table layout).
+-- In Phase 4 this will move to read from fct_repo_trends_daily.
 
-select
+SELECT
     repo_name,
-    sum(stars)               as stars_7d,
-    count(distinct event_date) as active_days
-from ghtrends_lake.fct_repo_trends_daily
-where event_date >= current_date - interval '7' day
-group by repo_name
-order by stars_7d desc
-limit 50;
+    count(*) AS stars
+FROM ghtrends_lake.raw
+WHERE event_type = 'WatchEvent'
+  AND year = '2026'
+  AND repo_name IS NOT NULL
+GROUP BY repo_name
+ORDER BY stars DESC
+LIMIT 50;

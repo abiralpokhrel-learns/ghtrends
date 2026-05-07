@@ -1,25 +1,35 @@
--- One row per repo per day. Combines stars and PRs into a single activity table.
+-- One row per repo per day. Combines stars and PR activity into a single
+-- intermediate table. Marts (fct_repo_trends_daily) read from this.
+--
+-- Note on uniqueness: we group by (repo_id, event_date) only and pick
+-- max(repo_name) for the name. GitHub repos can be renamed, so the same
+-- repo_id may appear with multiple names — without this, the unique test
+-- on (repo_id, event_date) in the mart would fail.
 
 with stars as (
     select
         repo_id,
-        repo_name,
+        max(repo_name) as repo_name,
         event_date,
-        count(*) as stars
+        count(*)       as stars
     from {{ ref('stg_watch_events') }}
-    group by 1, 2, 3
+    where repo_id is not null
+    group by repo_id, event_date
 ),
 
 prs as (
+    -- Note: pr_merged is integer (0/1) in the raw Parquet because pyarrow
+    -- stored it that way. Compare to 1/0, not true/false.
     select
         repo_id,
-        repo_name,
+        max(repo_name) as repo_name,
         event_date,
-        count(*) filter (where pr_action = 'opened') as prs_opened,
-        count(*) filter (where pr_merged = true)    as prs_merged,
-        count(*) filter (where pr_action = 'closed' and pr_merged = false) as prs_closed_unmerged
+        sum(case when pr_action = 'opened' then 1 else 0 end)                       as prs_opened,
+        sum(case when pr_merged = 1 then 1 else 0 end)                              as prs_merged,
+        sum(case when pr_action = 'closed' and pr_merged = 0 then 1 else 0 end)     as prs_closed_unmerged
     from {{ ref('stg_pull_request_events') }}
-    group by 1, 2, 3
+    where repo_id is not null
+    group by repo_id, event_date
 )
 
 select

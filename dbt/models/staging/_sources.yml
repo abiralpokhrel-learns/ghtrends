@@ -3,22 +3,24 @@ version: 2
 sources:
   - name: lake
     schema: ghtrends_lake
-    description: Glue Catalog tables crawled from the raw Parquet written by the ingest Lambda
+    description: Glue Catalog tables crawled from raw Parquet written by the ingest Lambda
+
     tables:
-      - name: watch_events
-        description: GitHub WatchEvent (a star) — partitioned by year/month/day
+      - name: raw
+        description: >
+          Unified GitHub events table. Filter on event_type to get WatchEvent or
+          PullRequestEvent rows. Partitioned by event_type / year / month / day / hour.
         columns:
           - name: id
+            description: Unique GitHub event ID
             tests: [not_null]
+          - name: event_type
+            description: GitHub event type (WatchEvent or PullRequestEvent)
+            tests:
+              - not_null
+              - accepted_values:
+                  values: ['WatchEvent', 'PullRequestEvent']
           - name: repo_id
             tests: [not_null]
           - name: created_at
-            tests: [not_null]
-
-      - name: pull_request_events
-        description: GitHub PullRequestEvent — partitioned by year/month/day
-        columns:
-          - name: id
-            tests: [not_null]
-          - name: repo_id
             tests: [not_null]

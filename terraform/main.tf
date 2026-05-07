@@ -10,21 +10,23 @@ module "data_lake" {
 }
 
 # --- Phase 2: ingest lambda + EventBridge cron ---
-# module "ingest_lambda" {
-#   source           = "./modules/lambda_ingest"
-#   project_name     = var.project_name
-#   env              = var.env
-#   raw_bucket_name  = module.data_lake.raw_bucket_name
-#   raw_bucket_arn   = module.data_lake.raw_bucket_arn
-# }
+module "ingest_lambda" {
+  source           = "./modules/lambda_ingest"
+  project_name     = var.project_name
+  env              = var.env
+  raw_bucket_name  = module.data_lake.raw_bucket_name
+  raw_bucket_arn   = module.data_lake.raw_bucket_arn
+  lake_bucket_name = module.data_lake.lake_bucket_name
+}
 
 # --- Phase 3: glue catalog + crawler over the partitioned Parquet ---
-# module "glue_catalog" {
-#   source            = "./modules/glue_catalog"
-#   project_name      = var.project_name
-#   env               = var.env
-#   raw_bucket_name   = module.data_lake.raw_bucket_name
-# }
+module "glue_catalog" {
+  source          = "./modules/glue_catalog"
+  project_name    = var.project_name
+  env             = var.env
+  raw_bucket_name = module.data_lake.raw_bucket_name
+  raw_bucket_arn  = module.data_lake.raw_bucket_arn
+}
 
 # --- Phase 6: read-only IAM user for Streamlit Community Cloud ---
 # module "streamlit_reader" {
