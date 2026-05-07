@@ -12,7 +12,7 @@ A serverless data platform on AWS that ingests every public GitHub event, models
 
 ## Screenshot
 
-![Dashboard screenshot](analysis/findings/trends_page.png)
+![Dashboard screenshot](analysis\findings\trends_page.png)
 
 ## Architecture
 
@@ -76,7 +76,7 @@ Five real findings produced by the queries in `analysis/queries/`:
 
 ### 1. Top trending repo: Hmbown/DeepSeek-TUI with 172 stars over 3 days
 
-![Finding 1](analysis/findings/01_top_starred_repos.png)
+![Finding 1](analysis\findings\01top_starred_repos.png)
 
 The top trending repository in the data window was Hmbown/DeepSeek-TUI, a terminal interface for DeepSeek, with 172 stars in 3 active days. The runners-up — modem-dev/hunk (98), addyosmani/agent-skills (95), nexu-io/open-design (70) — show a clear cluster around AI-developer-tooling, which tracks with the broader 2026 open-source momentum.
 
@@ -92,7 +92,7 @@ Query: [`analysis/queries/02_star_velocity.sql`](analysis/queries/02_star_veloci
 
 ### 3. Bots dominate GitHub activity — Dependabot alone touched 7,079 unique repos
 
-![Finding 3](analysis/findings/05_active_users.png)
+![Finding 3](analysis\findings\05_active_user.png)
 
 The top 5 most active GitHub accounts in the window are all bots: Dependabot (14,684 events across 7,079 repos), pull[bot] (4,631 events), github-actions[bot] (2,127), renovate[bot] (1,574), and Copilot (863). This is a measurement of what "open source contribution" actually looks like at scale — automated dependency updates and CI runs vastly outnumber human commits. The first non-bot account (gaoypChina) appears at rank 12 with 90 events.
 
