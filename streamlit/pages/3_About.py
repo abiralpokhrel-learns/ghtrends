@@ -42,6 +42,6 @@ st.markdown(
 
     ### Contact
 
-    Built by NISHANT PANDEY.
+    Built by ABIRAL pokhrel;.
     """
 )
