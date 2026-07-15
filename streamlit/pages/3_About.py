@@ -38,7 +38,7 @@ st.markdown(
 
     ### Source
 
-    [github.com/YOUR_USERNAME/ghtrends](https://github.com/YOUR_USERNAME/ghtrends)
+    [github.com/YOUR_USERNAME/ghtrends](https://github.com/abiralpokhrel-learns/ghtrends)
 
     ### Contact
 

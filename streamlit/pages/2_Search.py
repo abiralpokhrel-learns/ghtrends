@@ -72,7 +72,7 @@ if query_text:
         lang = r.get("language") or "Unknown"
         stars = int(r.get("stars") or 0)
         st.markdown(
-            f"**[{full_name}](https://github.com/{full_name})** "
+            f"**[{full_name}](https://github.com/{abiralpokhrel-learns})** "
             f"— {lang} — :star: {stars:,}"
         )
         st.caption(f"Similarity: {r['similarity']:.3f}")
