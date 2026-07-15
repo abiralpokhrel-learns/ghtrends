@@ -38,10 +38,10 @@ st.markdown(
 
     ### Source
 
-    [github.com/YOUR_USERNAME/ghtrends](https://github.com/abiralpokhrel-learns/ghtrends)
+    [github.com/abiralpokhrel-learns/ghtrends](https://github.com/abiralpokhrel-learns/ghtrends)
 
     ### Contact
 
-    Built by ABIRAL pokhrel;.
+    Built by ABIRAL POKHREL.
     """
 )
