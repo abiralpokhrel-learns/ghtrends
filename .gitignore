@@ -76,3 +76,5 @@ output/
 *.parquet
 *.csv
 !analysis/queries/sample_data/*.csv
+.venv-dbt/
+.venv/
