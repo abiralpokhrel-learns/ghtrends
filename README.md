@@ -225,4 +225,4 @@ Reach out if you'd like to talk about data engineering, AWS, or this project spe
 
 ## License
 
-MIT — see [LICENSE](LICENSE) file.
+MIT - no LICENSE file is currently included in this repository.
