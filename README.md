@@ -138,4 +138,4 @@ Abiral Pokhrel — [GitHub](https://github.com/abiralpokhrel-learns) • [Linked
 
 ## ⚖️ Licence
 
-No LICENSE file is currently included in this repository.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
