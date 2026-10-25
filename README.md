@@ -67,6 +67,7 @@ In short: EventBridge fires the ingest Lambda every hour, a Glue Crawler registe
 | `Makefile` | Common project commands — run `make help` to list them |
 | `PHASES.md` | Detailed 6-phase build plan |
 | `NEXT.md` | Ideas cut from v1 and considered for v2 |
+| `.env.example` | Example environment variables - copy to `.env` and fill in your values |
 
 ## 🚀 Getting started
 
