@@ -8,7 +8,7 @@
 
 **🌐 Live demo:** [ghtrends.streamlit.app](https://ghtrends.streamlit.app/)  
 
-![ghtrends pipeline demo](assets/ghtrends-demo.mp4)
+![ghtrends pipeline demo](assets/ghtrends-flow.gif)
 **📚 dbt project documentation:** [abiralpokhrel-learns.github.io/ghtrends](https://abiralpokhrel-learns.github.io/ghtrends/)
 
 > **Note on cold start:** the app sleeps after 30 minutes of inactivity. The first request after sleep takes 30–60 seconds to wake up.
