@@ -1,3 +1,5 @@
+![ghtrends hero](assets/ghtrends-hero.png)
+
 # 📊 ghtrends — Open Source Trends Intelligence Platform
 
 [![Terraform plan](https://github.com/abiralpokhrel-learns/ghtrends/actions/workflows/terraform-plan.yml/badge.svg)](https://github.com/abiralpokhrel-learns/ghtrends/actions/workflows/terraform-plan.yml)
@@ -5,6 +7,8 @@
 > A serverless data platform on AWS that turns public GitHub activity into searchable, daily repository trends — with no always-on servers, and designed to stay within the AWS free tier.
 
 **🌐 Live demo:** [ghtrends.streamlit.app](https://ghtrends.streamlit.app/)  
+
+![ghtrends pipeline demo](assets/ghtrends-demo.mp4)
 **📚 dbt project documentation:** [abiralpokhrel-learns.github.io/ghtrends](https://abiralpokhrel-learns.github.io/ghtrends/)
 
 > **Note on cold start:** the app sleeps after 30 minutes of inactivity. The first request after sleep takes 30–60 seconds to wake up.
